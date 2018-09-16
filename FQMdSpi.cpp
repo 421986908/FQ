@@ -1,19 +1,35 @@
-#include "FQMdSpi.h"
+﻿#include "FQMdSpi.h"
 
 #include <string.h>
+#include <fstream>
 
 #include "boost/thread/thread.hpp"
-#include "boost/filesystem.hpp"
-
-using namespace boost::filesystem;
+#include "boost/lexical_cast.hpp"
 
 CFQMdSpiImp::CFQMdSpiImp()
 {
-    path fpath("test");
-    boost::filesystem::ifstream filestream(fpath);
-    cout << filestream << endl;
+	char line[200];
+	string strLine;
+	ifstream file("F:\\FQ\\FQ\\Debug\\20180916.txt");
+	while (!file.eof())
+	{
+		file.getline(line, 200);
+		strLine = line;
+		string time = strLine.substr(0, 26);
+		string id = strLine.substr(35, 6);
+		string price = strLine.substr(42, 7);
+		size_t pos = strLine.find(".", 54);
+		string volume = strLine.substr(54, pos - 54);
 
-    filestream.close();
+		if (!id.compare("000001"))
+		{
+			volume01[time] = boost::lexical_cast<double>(volume);
+		}
+		else
+		{
+			volume16[time] = boost::lexical_cast<double>(volume);
+		}
+	}
 }
 
 void CFQMdSpiImp::OnRspError(FQRspInfo* pRspInfo)
@@ -24,10 +40,10 @@ void CFQMdSpiImp::OnRspError(FQRspInfo* pRspInfo)
 void CFQMdSpiImp::OnFrontConnected()
 {
     cout << "connected!" << endl;
-    char* tmp[10];
+    const char* tmp[10];
     tmp[0] = "000016";
     tmp[1] = "000001";
-    fq_api->SubscribeMarketData(tmp, 2);
+    fq_api->SubscribeMarketData((char **)tmp, 2);
 }
 
 void CFQMdSpiImp::OnFrontDisconnected()
@@ -41,6 +57,8 @@ void CFQMdSpiImp::OnRtnIndexDepthMarketData(FQIndexDepthMarketData* pIndexData)
     {
         data[0][0] = pIndexData->LastPx;
         data[0][1] = pIndexData->PrevClosePx;
+
+		
     }
     else
     {

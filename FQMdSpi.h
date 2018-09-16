@@ -1,4 +1,5 @@
-#include <iostream>
+﻿#include <iostream>
+#include <map>
 
 #include "FQMdApi.h"
 #include "FQMdDataStruct.h"
@@ -9,6 +10,8 @@ class CFQMdSpiImp : CFQMdSpi{
 public:
     CFQMdApi* fq_api;
     double data[20][2];
+	map<string, double> volume01;
+	map<string, double> volume16;
 
     CFQMdSpiImp();
 
