@@ -18,6 +18,9 @@ public:
     string preMin;
     string curMin;
 
+    ofstream* file01;
+    ofstream* file16;
+
     CFQMdSpiImp();
 
     void OnFrontConnected();
