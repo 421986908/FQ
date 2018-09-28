@@ -2,6 +2,8 @@
 
 #include <string.h>
 #include <fstream>
+#include <iostream>
+#include<iomanip>
 
 #include "boost/thread/thread.hpp"
 #include "boost/lexical_cast.hpp"
@@ -9,6 +11,12 @@
 CFQMdSpiImp::CFQMdSpiImp()
 :preMin("")
 {
+    file01 = new ofstream("/home/jinwen/FQ/20180920_01",std::ofstream::out);
+    *file01<<setiosflags(ios::fixed)<<setprecision(2);
+    file16 = new ofstream("/home/jinwen/FQ/20180920_16",std::ofstream::out);
+    *file16<<setiosflags(ios::fixed)<<setprecision(2);
+
+
 	char line[200];
 	string strLine;
 	ifstream file("F:\\FQ\\FQ\\Debug\\20180916.txt");
@@ -67,6 +75,15 @@ void CFQMdSpiImp::OnFrontDisconnected()
 
 void CFQMdSpiImp::OnRtnIndexDepthMarketData(FQIndexDepthMarketData* pIndexData)
 {
+    if(!strcmp(pIndexData->InstrumentID,"000001"))
+    {
+        *file01  << pIndexData->TimeStamp << " " << pIndexData->LastPx << " " << pIndexData->TradeVolume << endl;
+    }
+    else
+    {
+        *file16  << pIndexData->TimeStamp << " " << pIndexData->LastPx << " " << pIndexData->TradeVolume << endl;
+    }
+
     string time;
     pIndexData->TimeStamp[12] = 0;//199012211025
     time = pIndexData->TimeStamp;
@@ -107,9 +124,9 @@ void CFQMdSpiImp::OnRtnStockDepthMarketData(FQStockDepthMarketData* pMarketData)
 void CFQMdSpiImp::Show()
 {
     cout << data[0][0] << "  " << (data[0][0] - data[0][1]) / data[0][1] * 100;
-    cout << "  " << today_volume01[preMin] / yestoday_volume01[preMin];
+    //cout << "  " << today_volume01[preMin] / yestoday_volume01[preMin];
     cout << "  ";
     cout << data[1][0] << "  " << (data[1][0] - data[1][1]) / data[1][1] * 100;
-    cout << "  " << today_volume16[preMin] / yestoday_volume16[preMin];
+    //cout << "  " << today_volume16[preMin] / yestoday_volume16[preMin];
     cout << endl;
 }
